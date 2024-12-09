@@ -35,6 +35,7 @@ require_once __DIR__ . '/config.php';
 
     <!-- Customized Bootstrap Stylesheet -->
     <link href="<?= ASSETS ?>css/style.css" rel="stylesheet">
+    <link href="<?= ASSETS ?>css/custom.css" rel="stylesheet">
 </head>
 
 <body>
@@ -42,19 +43,27 @@ require_once __DIR__ . '/config.php';
 
 // Função de autoload personalizada
 $autoload = function($class) {
-    // if($class == 'Email'){
-    //     include('vendor/phpmailer/phpmailer/src/PHPMailer.php');
-    // }
-    include($class.'.php');
+    // Converte namespace separators para directory separators
+    $class = str_replace('\\', DIRECTORY_SEPARATOR, $class);
+    
+    // Define o diretório base do projeto
+    $baseDir = __DIR__ . DIRECTORY_SEPARATOR;
+    
+    // Caminho completo do arquivo
+    $file = $baseDir . $class . '.php';
+    
+    // Verifica se o arquivo existe e o inclui
+    if (file_exists($file)) {
+        require $file;
+    }
 };
 
 // Registra a função de autoload personalizada
 spl_autoload_register($autoload);
 
-
 // Instancia a aplicação
 $app = new Application();
-// Executa a aplicacao
+// Executa a aplicação
 $app->executar();
 
 ?>

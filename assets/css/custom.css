@@ -1,0 +1,10 @@
+
+.carousel-item{
+    width: 100%;
+    height: 70vh;
+  }
+
+.carousel-caption{
+    background-size: 100% 100%;
+}
+ 

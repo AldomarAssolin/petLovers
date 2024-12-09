@@ -7,23 +7,33 @@ use src\controllers\FooterController;
 
 class MainView
 {
-    private $fileName;
     private $header;
     private $footer;
 
-    public function __construct($fileName)
+    public function __construct()
     {
-        $this->fileName = $fileName;
         $this->header = new HeaderController();
         $this->footer = new FooterController();
     }
 
-    public function render($arr = [])
+    public function render($viewName, $data = [])
     {
         $this->header->executar();
-        include('src/views/pages/' . $this->fileName . '.php');
+
+        $viewName = ucfirst($viewName) . 'View';
+        $viewClass = "src\\views\\pages\\$viewName";
+
+        if (class_exists($viewClass)) {
+            $view = new $viewClass();
+            if (method_exists($view, 'render')) {
+                $view->render($data);
+            } else {
+                echo "Método render não encontrado em $viewName";
+            }
+        } else {
+            echo "Classe $viewName não encontrada";
+        }
+
         $this->footer->executar();
     }
 }
-
-?>

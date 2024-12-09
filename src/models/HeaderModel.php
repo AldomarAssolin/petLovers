@@ -18,7 +18,7 @@ class HeaderModel
             'subtitle' => 'Lover',
             'atendimento' => '8:00 - 18:00',
             'email' => 'contato@petlover.com',
-            'telefone' => '+012 345 6789'
+            'telefone' => '+012 345 6789',
         ];
     }
 }

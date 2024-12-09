@@ -23,7 +23,6 @@ class AboutController extends Controller
     public function executar(){
         $data = $this->model->getAbout();
         $this->view->render('about', $data);
-        
     }
 }
 

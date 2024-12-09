@@ -1,33 +1,51 @@
 <?php
 
-
-
 use src\controllers\ErrorController;
 
 class Application
 {
-
     public function executar()
     {
-        
-        $url = $_GET['url'] ?? 'home'; //verifica se a url foi passada
-        $url = array_filter(explode('/', $url)); //quebra a url em um array
+        $url = $this->getUrl();
+        $controllerName = $this->getControllerName($url);
 
-        $url = ucfirst($url[0]); //primeira letra maiúscula
-        $url .= 'Controller'; //concatena a palavra controller
+        if ($this->controllerExists($controllerName)) {
+            $this->loadController($controllerName);
+        } else {
+            $this->loadErrorController();
+        }
+    }
 
-        //verifica se o arquivo existe
-        if (file_exists('src/controllers/' . $url . '.php')) {
-            require('src/controllers/' . $url . '.php');
-            //instanciar a classe
-            $className = 'src\\controllers\\' . $url;
-            //echo 'Carregando a classe ' . $url . '<br>';
-            //executar o método
-            $controller = new $className();
+    private function getUrl()
+    {
+        return filter_input(INPUT_GET, 'url', FILTER_SANITIZE_URL) ?? 'home';
+    }
+
+    private function getControllerName($url)
+    {
+        $urlParts = array_filter(explode('/', $url));
+        $controllerName = ucfirst($urlParts[0] ?? 'home') . 'Controller';
+        return "src\\controllers\\$controllerName";
+    }
+
+    private function controllerExists($controllerName)
+    {
+        return class_exists($controllerName);
+    }
+
+    private function loadController($controllerName)
+    {
+        $controller = new $controllerName();
+        if (method_exists($controller, 'executar')) {
             $controller->executar();
         } else {
-            $url = new ErrorController();
-            $url->executar();
+            $this->loadErrorController();
         }
+    }
+
+    private function loadErrorController()
+    {
+        $errorController = new ErrorController();
+        $errorController->executar();
     }
 }
